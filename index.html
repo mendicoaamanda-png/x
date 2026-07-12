@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Whimsical 12‑Week + College Planner Dashboard</title>
+  <style>
+    :root{
+      --bg:#0f0f14;
+      --panel:#171725;
+      --panel2:#1e1e31;
+      --text:#f3f3f7;
+      --muted:#b8b8c7;
+      --line:#2b2b44;
+      --accent:#ff6aa6;   /* whimsical pink */
+      --accent2:#7cdbff;  /* dreamy blue */
+      --good:#6ee7a8;
+      --warn:#ffd27c;
+      --bad:#ff7a7a;
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius2: 12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:
+        radial-gradient(1100px 700px at 10% 0%, rgba(255,106,166,.18), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(124,219,255,.14), transparent 55%),
+        radial-gradient(900px 600px at 50% 100%, rgba(110,231,168,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:26px 18px 10px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding:14px 14px;
+      box-shadow: var(--shadow);
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      min-width: 280px;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,106,166,.95), rgba(255,106,166,.0) 55%),
+        radial-gradient(circle at 70% 70%, rgba(124,219,255,.9), rgba(124,219,255,.0) 55%),
+        rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .brand h1{
+      font-size:15px; margin:0; letter-spacing:.2px;
+    }
+    .brand p{
+      margin:2px 0 0; color:var(--muted); font-size:12px;
+    }
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+    .chip, select, input[type="text"], input[type="date"]{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      border-radius: 999px;
+      padding:9px 12px;
+      outline:none;
+      font-size:12.5px;
+    }
+    select, input[type="date"]{ padding:9px 12px; }
+    .chip button{
+      all:unset; cursor:pointer;
+    }
+    .chip:hover, select:hover, input:hover{ border-color: rgba(255,255,255,.18); }
+    main{ max-width:1200px; margin:0 auto; padding:12px 18px 30px; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width:unset; }
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.08);
+    }
+    .title{
+      display:flex; gap:10px; align-items:center;
+    }
+    .title h2{ margin:0; font-size:13.5px; letter-spacing:.2px; }
+    .title .tag{ font-size:11px; color:var(--muted); border:1px solid rgba(255,255,255,.12); padding:4px 9px; border-radius:999px; }
+    .card .bd{ padding:14px 16px; }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; }
+    .stat{
+      flex:1;
+      min-width: 170px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .stat .k{ color:var(--muted); font-size:11.5px; }
+    .stat .v{ margin-top:6px; font-size:18px; font-weight:650; }
+    .stat .s{ margin-top:6px; font-size:11.5px; color:var(--muted); }
+    .progress{
+      margin-top:10px; height:10px; border-radius:999px;
+      background:rgba(255,255,255,.06);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .bar{ height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){ .split{ grid-template-columns:1fr; } }
+    .list{
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .item{
+      display:grid;
+      grid-template-columns: 22px 1fr auto;
+      gap:10px;
+      align-items:center;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding:10px 10px;
+    }
+    .item input[type="checkbox"]{
+      width:18px; height:18px; accent-color: var(--accent);
+    }
+    .item .meta{
+      color:var(--muted);
+      font-size:11px;
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    .pill{
+      font-size:11px; color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.10);
+      padding:3px 8px; border-radius:999px;
+    }
+    .pill.good{ border-color: rgba(110,231,168,.35); background: rgba(110,231,168,.10); }
+    .pill.warn{ border-color: rgba(255,210,124,.35); background: rgba(255,210,124,.10); }
+    .pill.bad{ border-color: rgba(255,122,122,.35); background: rgba(255,122,122,.10); }
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding:9px 11px;
+      border-radius: 12px;
+      font-size: 12.5px;
+    }
+    .btn:hover{ border-color: rgba(255,255,255,.22); }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(255,106,166,.22), rgba(124,219,255,.18));
+      border-color: rgba(255,255,255,.18);
+    }
+    details{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding:10px 12px;
+    }
+    summary{ cursor:pointer; color:var(--text); font-weight:650; font-size:12.5px; }
+    textarea{
+      width:100%;
+      min-height:90px;
+      resize:vertical;
+      background:rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      color:var(--text);
+      padding:10px 10px;
+      font-family:inherit;
+      font-size:12.5px;
+      outline:none;
+    }
+    .small{ color:var(--muted); font-size:11.5px; }
+    .divider{ height:1px; background:rgba(255,255,255,.10); margin:12px 0; }
+    .toast{
+      position: fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom: 18px;
+      background: rgba(20,20,32,.92);
+      border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-size: 12.5px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(-2px); }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Whimsical 12‑Week Year + College Planner</h1>
+        <p id="subtitle">Mix‑and‑match dashboard • whimsical + functional</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <select id="mode">
+        <option value="week">Weekly Mode</option>
+        <option value="day">Daily Mode</option>
+        <option value="school">School Mode</option>
+        <option value="aesthetic">Aesthetic Extras</option>
+      </select>
+
+      <select id="weekNumber"></select>
+
+      <input id="search" type="text" placeholder="Search tasks, quests, classes..." />
+
+      <span class="chip"><button id="exportBtn" title="Download your data as JSON">Export</button></span>
+      <span class="chip"><button id="resetBtn" title="Reset to defaults">Reset</button></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- LEFT: CORE PLANNING -->
+    <section class="card" id="coreCard">
+      <div class="hd">
+        <div class="title">
+          <h2>12‑Week Core</h2>
+          <span class="tag" id="termTag">Week 1</span>
+        </div>
+        <button class="btn primary" id="quickAddBtn">Quick Add</button>
+      </div>
+
+      <div class="bd">
+        <div class="split">
+          <div>
+            <div class="row">
+              <div class="stat">
+                <div class="k">Word of the term / mantra</div>
+                <div class="v" id="mantra">“Bloom anyway.”</div>
+                <div class="s">Tap to edit in Quick Add</div>
+              </div>
+              <div class="stat">
+                <div class="k">Season aesthetic</div>
+                <div class="v" id="aesthetic">Moons • Stars • Cocoa</div>
+                <div class="s">Palette + motifs + playlist vibe</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <details open>
+              <summary>12‑week vision</summary>
+              <p class="small" style="margin:8px 0 0;">
+                How you want to <b>feel</b> and what you want to be <b>true</b> by Week 12.
+              </p>
+              <textarea id="vision">I feel steady, proud, and energized. My routines are gentle but consistent, and my school system is calm.</textarea>
+            </details>
+
+            <div style="height:10px"></div>
+
+            <details open>
+              <summary>3–5 outcome goals (lag measures)</summary>
+              <div class="list" id="goalsList" style="margin-top:10px"></div>
+              <div class="small" style="margin-top:8px;">Tip: keep goals measurable (grade, savings, weight, etc.).</div>
+            </details>
+          </div>
+
+          <div>
+            <details open>
+              <summary>Weekly scorecard (lead measures)</summary>
+              <div class="small" style="margin:8px 0 10px;">
+                Lead = actions (study hours, workouts, sleep). Lag = results.
+              </div>
+
+              <div class="row">
+                <div class="stat">
+                  <div class="k">Score this week</div>
+                  <div class="v"><span id="scoreNow">0</span> / <span id="scoreTotal">0</span></div>
+                  <div class="progress" aria-label="Weekly score progress">
+                    <div class="bar" id="scoreBar"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="list" id="scorecardList" style="margin-top:10px"></div>
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                <button class="btn" id="markWeekDoneBtn">Mark Week Reflection Done</button>
+                <button class="btn" id="miniReviewBtn">Mini Review</button>
+              </div>
+            </details>
+
+            <div style="height:10px"></div>
+
+            <details>
+              <summary>Rules of the season</summary>
+              <textarea id="rules" placeholder="Sleep, phone boundaries, minimums...">Phone off by 11pm. Minimum: 30 minutes focused study. Move body 20 minutes.</textarea>
+            </details>
+
+            <div style="height:10px"></div>
+
+            <details>
+              <summary>“If everything goes wrong, do this minimum”</summary>
+              <textarea id="minimumPlan">1) 20 min review, 2) one assignment step, 3) water + shower, 4) early bed.</textarea>
+            </details>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <details open id="weeklyPlan">
+          <summary>Weekly planning spread</summary>
+          <div class="split" style="margin-top:10px;">
+            <div>
+              <div class="small">Top 3 priorities</div>
+              <div class="list" id="prioritiesList" style="margin-top:8px;"></div>
+
+              <div style="height:10px"></div>
+
+              <div class="small">One brave thing</div>
+              <input class="chip" id="braveThing" style="width:100%; border-radius:12px;" value="Ask a question in office hours." />
+            </div>
+
+            <div>
+              <div class="small">Time-block plan (quick map)</div>
+              <textarea id="timeBlocks">Mon/Wed/Fri: deep work 2–4pm
+Tue/Thu: review 3–4pm
+Sat: catch-up 10–12</textarea>
+
+              <div style="height:10px"></div>
+
+              <div class="small">End-of-week reflection</div>
+              <textarea id="reflection" placeholder="Wins • What slipped & why • One adjustment"></textarea>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- RIGHT: SCHOOL + QUESTS -->
+    <aside class="card" id="rightCard">
+      <div class="hd">
+        <div class="title">
+          <h2 id="rightTitle">College Planner</h2>
+          <span class="tag" id="rightTag">Dashboard</span>
+        </div>
+        <button class="btn" id="pomodoroBtn">Pomodoro</button>
+      </div>
+
+      <div class="bd">
+        <details open>
+          <summary>Semester essentials</summary>
+          <div class="small" style="margin:8px 0 10px;">Key dates + credit load estimate.</div>
+          <div class="row">
+            <div class="stat">
+              <div class="k">Credits</div>
+              <div class="v"><span id="credits">12</span></div>
+              <div class="s">Adjust in Quick Add</div>
+            </div>
+            <div class="stat">
+              <div class="k">Weekly study target</div>
+              <div class="v"><span id="studyTarget">18</span> hrs</div>
+              <div class="s">Rule of thumb: 2–3 hrs/credit</div>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="small">Key dates (editable JSON in Quick Add)</div>
+          <div class="list" id="keyDatesList" style="margin-top:8px;"></div>
+        </details>
+
+        <div style="height:10px"></div>
+
+        <details open>
+          <summary>Classes</summary>
+          <div class="list" id="classesList" style="margin-top:10px;"></div>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="btn" id="addClassBtn">Add class</button>
+            <button class="btn" id="addAssignmentBtn">Add assignment</button>
+          </div>
+        </details>
+
+        <div style="height:10px"></div>
+
+        <details open>
+          <summary>Assignments & exams (master list)</summary>
+          <div class="small" style="margin:8px 0 10px;">
+            Filter with the search box up top.
+          </div>
+          <div class="list" id="assignmentsList"></div>
+        </details>
+
+        <div style="height:10px"></div>
+
+        <details>
+          <summary>Quest log + reward menu</summary>
+          <div class="small" style="margin:8px 0 10px;">
+            Turn tasks into quests; reward yourself like it’s a cozy RPG.
+          </div>
+          <div class="list" id="questsList"></div>
+          <div class="divider"></div>
+          <div class="small">Rewards</div>
+          <div class="row" id="rewardsRow" style="margin-top:8px;"></div>
+        </details>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast">Saved.</div>
+
+<!-- Quick Add modal (simple, inline) -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55);">
+  <div style="max-width:860px; margin:30px auto; padding:0 16px;">
+    <div class="card">
+      <div class="hd">
+        <div class="title">
+          <h2>Quick Add / Edit Data</h2>
+          <span class="tag">JSON</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" id="closeModalBtn">Close</button>
+          <button class="btn primary" id="saveModalBtn">Save</button>
+        </div>
+      </div>
+      <div class="bd">
+        <p class="small" style="margin-top:0;">
+          Edit your dashboard content here (goals, lead measures, classes, assignments, key dates, rewards).
+        </p>
+        <textarea id="dataEditor" style="min-height:320px;"></textarea>
+        <p class="small" style="margin-bottom:0;">
+          Tip: if you break the JSON, it won’t save—use undo.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Data model ----------
+  const DEFAULT_DATA = {
+    meta: {
+      termName: "12 Weeks of Bloom",
+      mantra: "Bloom anyway.",
+      aesthetic: "Moons • Stars • Cocoa",
+      credits: 12,
+      studyTargetHours: 18
+    },
+
+    // Lag measures (outcomes)
+    goals: [
+      { text: "Finish the term with a grade I’m proud of", metric: "Target grade", status: "in_progress" },
+      { text: "Build a steady workout routine", metric: "3x/week", status: "in_progress" },
+      { text: "Keep sleep consistent", metric: "7–8 hrs", status: "in_progress" }
+    ],
+
+    // Lead measures (scorecard items)
+    scorecard: [
+      { text: "Study (focused) 10 hours", points: 3, done: false, category: "school" },
+      { text: "Work out 3 times", points: 2, done: false, category: "wellness" },
+      { text: "2 walks", points: 1, done: false, category: "wellness" },
+      { text: "Sleep before midnight 4 nights", points: 2, done: false, category: "wellness" }
+    ],
+
+    weekly: {
+      weekNumber: 1,
+      priorities: [
+        { text: "Set up class dashboards", done: false },
+        { text: "Start assignment tracker", done: false },
+        { text: "Schedule office hours", done: false }
+      ],
+      braveThing: "Ask a question in office hours.",
+      timeBlocks: "Mon/Wed/Fri: deep work 2–4pm\nTue/Thu: review 3–4pm\nSat: catch-up 10–12",
+      reflection: "",
+      reflectionDone: false
+    },
+
+    school: {
+      keyDates: [
+        { label: "Add/Drop", date: "2026-08-30" },
+        { label: "Midterms week", date: "2026-10-12" },
+        { label: "Finals week", date: "2026-12-07" }
+      ],
+      classes: [
+        { name: "Anatomy & Physiology I", professor: "Prof. ___", email: "", officeHours: "", meeting: "MW 10:00" },
+        { name: "College Algebra", professor: "Prof. ___", email: "", officeHours: "", meeting: "TR 1:00" }
+      ],
+      assignments: [
+        { title: "Chapter 1 Reading Notes", course: "Anatomy & Physiology I", due: "2026-08-26", type: "reading", weight: "low", done: false },
+        { title: "Problem Set 1", course: "College Algebra", due: "2026-08-28", type: "homework", weight: "med", done: false },
+        { title: "Quiz 1", course: "Anatomy & Physiology I", due: "2026-09-02", type: "quiz", weight: "med", done: false }
+      ]
+    },
+
+    whimsy: {
+      quests: [
+        { text: "Potion recipe: spicy study snack", done: false, reward: "Small" },
+        { text: "Side quest: 30 minutes creative hobby", done: false, reward: "Small" },
+        { text: "Inner critic translator (1 entry)", done: false, reward: "Medium" }
+      ],
+      rewards: [
+        { label: "Small", items: ["Fancy latte", "Sticker sheet", "30 min show"] },
+        { label: "Medium", items: ["New book", "Friend date", "Museum trip"] },
+        { label: "Big", items: ["Day trip", "New shoes", "Spa/sauna"] }
+      ]
+    }
+  };
+
+  const STORAGE_KEY = "whimsicalPlannerDashboard_v1";
+  let data = loadData();
+  let mode = "week";
+
+  // ---------- Helpers ----------
+  function loadData(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return structuredClone(DEFAULT_DATA);
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : structuredClone(DEFAULT_DATA);
+    }catch{
+      return structuredClone(DEFAULT_DATA);
+    }
+  }
+  function saveData(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    toast("Saved.");
+  }
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 900);
+  }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function fmtDate(iso){
+    if(!iso) return "";
+    const d = new Date(iso+"T00:00:00");
+    return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+  }
+  function urgencyPill(dueISO, done){
+    if(done) return { label:"Done", cls:"good" };
+    if(!dueISO) return { label:"No due date", cls:"warn" };
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = new Date(dueISO+"T00:00:00");
+    const diff = Math.round((due - today)/(1000*60*60*24));
+    if(diff < 0) return { label:"Overdue", cls:"bad" };
+    if(diff === 0) return { label:"Due today", cls:"warn" };
+    if(diff <= 2) return { label:`Due in ${diff}d`, cls:"warn" };
+    return { label:`Due in ${diff}d`, cls:"" };
+  }
+  function matchesSearch(text){
+    const q = document.getElementById("search").value.trim().toLowerCase();
+    if(!q) return true;
+    return (text || "").toLowerCase().includes(q);
+  }
+
+  // ---------- Renderers ----------
+  function renderWeekSelector(){
+    const sel = document.getElementById("weekNumber");
+    sel.innerHTML = "";
+    for(let i=1;i<=12;i++){
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = `Week ${i}`;
+      if(i === (data.weekly.weekNumber || 1)) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  }
+
+  function renderHeader(){
+    document.getElementById("termTag").textContent = `Week ${data.weekly.weekNumber || 1}`;
+    document.getElementById("rightTag").textContent = mode === "school" ? "School" : mode === "day" ? "Daily" : mode === "aesthetic" ? "Extras" : "Dashboard";
+    document.getElementById("mantra").textContent = `“${data.meta.mantra || ""}”`;
+    document.getElementById("aesthetic").textContent = data.meta.aesthetic || "";
+    document.getElementById("credits").textContent = data.meta.credits ?? "";
+    document.getElementById("studyTarget").textContent = data.meta.studyTargetHours ?? "";
+    document.getElementById("braveThing").value = data.weekly.braveThing || "";
+    document.getElementById("timeBlocks").value = data.weekly.timeBlocks || "";
+    document.getElementById("reflection").value = data.weekly.reflection || "";
+    document.getElementById("vision").value = data.vision || document.getElementById("vision").value; // keep textarea if user typed
+    document.getElementById("rightTitle").textContent =
+      mode === "school" ? "College Planner" :
+      mode === "day" ? "Daily Pages" :
+      mode === "aesthetic" ? "Aesthetic / Whimsy" :
+      "College Planner";
+  }
+
+  function renderGoals(){
+    const root = document.getElementById("goalsList");
+    root.innerHTML = "";
+    data.goals.forEach((g, idx)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <span class="pill ${g.status==="done"?"good":g.status==="stuck"?"bad":"warn"}">${g.status || "in_progress"}</span>
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(g.text)}</div>
+          <div class="meta">
+            <span class="pill">${escapeHtml(g.metric || "metric")}</span>
+          </div>
+        </div>
+        <button class="btn" data-idx="${idx}">Cycle</button>
+      `;
+      el.querySelector("button").addEventListener("click", ()=>{
+        const order = ["in_progress","stuck","done"];
+        const cur = g.status || "in_progress";
+        g.status = order[(order.indexOf(cur)+1)%order.length];
+        saveData(); renderAll();
+      });
+      if(matchesSearch(g.text + " " + (g.metric||""))) root.appendChild(el);
+    });
+  }
+
+  function renderScorecard(){
+    const root = document.getElementById("scorecardList");
+    root.innerHTML = "";
+    const total = data.scorecard.reduce((s,i)=> s + (Number(i.points)||0), 0);
+    const now = data.scorecard.reduce((s,i)=> s + (i.done ? (Number(i.points)||0) : 0), 0);
+    document.getElementById("scoreNow").textContent = String(now);
+    document.getElementById("scoreTotal").textContent = String(total);
+    const pct = total ? (now/total)*100 : 0;
+    document.getElementById("scoreBar").style.width = `${clamp(pct,0,100)}%`;
+
+    data.scorecard.forEach((it, idx)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <input type="checkbox" ${it.done ? "checked":""} aria-label="done" />
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(it.text)}</div>
+          <div class="meta">
+            <span class="pill">${escapeHtml(it.category || "lead")}</span>
+            <span class="pill">${escapeHtml(String(it.points||0))} pts</span>
+          </div>
+        </div>
+        <button class="btn" data-idx="${idx}">Edit</button>
+      `;
+      el.querySelector("input").addEventListener("change",(e)=>{
+        it.done = e.target.checked;
+        saveData(); renderScorecard();
+      });
+      el.querySelector("button").addEventListener("click", ()=>{
+        openModal(); // edit via JSON for simplicity
+      });
+      if(matchesSearch(it.text + " " + (it.category||""))) root.appendChild(el);
+    });
+  }
+
+  function renderPriorities(){
+    const root = document.getElementById("prioritiesList");
+    root.innerHTML = "";
+    data.weekly.priorities.forEach((p, idx)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <input type="checkbox" ${p.done ? "checked":""} />
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(p.text)}</div>
+          <div class="meta"><span class="pill">${p.done ? "done" : "top 3"}</span></div>
+        </div>
+        <button class="btn" data-idx="${idx}">Remove</button>
+      `;
+      el.querySelector("input").addEventListener("change",(e)=>{
+        p.done = e.target.checked;
+        saveData(); renderPriorities();
+      });
+      el.querySelector("button").addEventListener("click",()=>{
+        data.weekly.priorities.splice(idx,1);
+        saveData(); renderPriorities();
+      });
+      if(matchesSearch(p.text)) root.appendChild(el);
+    });
+
+    // Add row
+    const add = document.createElement("div");
+    add.style.display="flex"; add.style.gap="8px"; add.style.marginTop="8px";
+    add.innerHTML = `
+      <input class="chip" id="newPriority" style="width:100%; border-radius:12px;" placeholder="Add a priority..." />
+      <button class="btn">Add</button>
+    `;
+    add.querySelector("button").addEventListener("click", ()=>{
+      const inp = add.querySelector("#newPriority");
+      const t = inp.value.trim();
+      if(!t) return;
+      data.weekly.priorities.push({ text:t, done:false });
+      inp.value="";
+      saveData(); renderPriorities();
+    });
+    root.appendChild(add);
+  }
+
+  function renderKeyDates(){
+    const root = document.getElementById("keyDatesList");
+    root.innerHTML = "";
+    data.school.keyDates.forEach(k=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.style.gridTemplateColumns = "1fr auto";
+      el.innerHTML = `
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(k.label)}</div>
+          <div class="meta"><span class="pill">${fmtDate(k.date)}</span></div>
+        </div>
+        <span class="pill">${escapeHtml(k.date || "")}</span>
+      `;
+      if(matchesSearch(k.label)) root.appendChild(el);
+    });
+  }
+
+  function renderClasses(){
+    const root = document.getElementById("classesList");
+    root.innerHTML = "";
+    data.school.classes.forEach((c, idx)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.style.gridTemplateColumns = "1fr auto";
+      el.innerHTML = `
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(c.name)}</div>
+          <div class="meta">
+            <span class="pill">${escapeHtml(c.meeting || "meeting")}</span>
+            <span class="pill">${escapeHtml(c.professor || "prof")}</span>
+          </div>
+        </div>
+        <button class="btn" data-idx="${idx}">Edit</button>
+      `;
+      el.querySelector("button").addEventListener("click", openModal);
+      if(matchesSearch(c.name + " " + (c.professor||""))) root.appendChild(el);
+    });
+  }
+
+  function renderAssignments(){
+    const root = document.getElementById("assignmentsList");
+    root.innerHTML = "";
+
+    // Sort by due date
+    const sorted = [...data.school.assignments].sort((a,b)=>{
+      const ad = a.due ? a.due : "9999-12-31";
+      const bd = b.due ? b.due : "9999-12-31";
+      return ad.localeCompare(bd);
+    });
+
+    sorted.forEach((a)=>{
+      if(!matchesSearch(a.title + " " + a.course + " " + a.type)) return;
+
+      const pill = urgencyPill(a.due, a.done);
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <input type="checkbox" ${a.done ? "checked":""} />
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(a.title)}</div>
+          <div class="meta">
+            <span class="pill">${escapeHtml(a.course || "course")}</span>
+            <span class="pill">${escapeHtml(a.type || "task")}</span>
+            <span class="pill ${pill.cls}">${pill.label}</span>
+          </div>
+        </div>
+        <span class="pill">${escapeHtml(a.due || "")}</span>
+      `;
+      el.querySelector("input").addEventListener("change",(e)=>{
+        a.done = e.target.checked;
+        saveData(); renderAssignments();
+      });
+      root.appendChild(el);
+    });
+  }
+
+  function renderQuests(){
+    const root = document.getElementById("questsList");
+    root.innerHTML = "";
+    data.whimsy.quests.forEach((q)=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <input type="checkbox" ${q.done ? "checked":""} />
+        <div>
+          <div style="font-weight:650; font-size:12.5px;">${escapeHtml(q.text)}</div>
+          <div class="meta">
+            <span class="pill">${escapeHtml(q.reward || "Reward")}</span>
+          </div>
+        </div>
+        <span class="pill">${q.done ? "claimed" : "quest"}</span>
+      `;
+      el.querySelector("input").addEventListener("change",(e)=>{
+        q.done = e.target.checked;
+        saveData(); renderQuests();
+      });
+      if(matchesSearch(q.text)) root.appendChild(el);
+    });
+
+    const add = document.createElement("div");
+    add.style.display="flex"; add.style.gap="8px"; add.style.marginTop="8px";
+    add.innerHTML = `
+      <input class="chip" id="newQuest" style="width:100%; border-radius:12px;" placeholder="Add a quest..." />
+      <button class="btn">Add</button>
+    `;
+    add.querySelector("button").addEventListener("click", ()=>{
+      const t = add.querySelector("#newQuest").value.trim();
+      if(!t) return;
+      data.whimsy.quests.push({ text:t, done:false, reward:"Small" });
+      add.querySelector("#newQuest").value="";
+      saveData(); renderQuests();
+    });
+    root.appendChild(add);
+  }
+
+  function renderRewards(){
+    const row = document.getElementById("rewardsRow");
+    row.innerHTML = "";
+    data.whimsy.rewards.forEach(r=>{
+      const box = document.createElement("div");
+      box.className = "stat";
+      box.style.minWidth = "170px";
+      box.innerHTML = `
+        <div class="k">${escapeHtml(r.label)}</div>
+        <div class="v" style="font-size:12.5px; font-weight:650; margin-top:8px;">
+          ${r.items.map(i=>`<span class="pill" style="display:inline-block; margin:4px 4px 0 0;">${escapeHtml(i)}</span>`).join("")}
+        </div>
+      `;
+      row.appendChild(box);
+    });
+  }
+
+  function renderModeVisibility(){
+    const weekly = document.getElementById("weeklyPlan");
+    const rightCard = document.getElementById("rightCard");
+    if(mode === "week"){
+      weekly.open = true;
+      rightCard.style.display = "";
+    }else if(mode === "day"){
+      weekly.open = true;
+      document.getElementById("reflection").placeholder =
+        "Daily reflection (wins • energy • next tiny step)";
+      rightCard.style.display = "";
+    }else if(mode === "school"){
+      weekly.open = false;
+      rightCard.style.display = "";
+    }else if(mode === "aesthetic"){
+      weekly.open = false;
+      rightCard.style.display = "";
+      // open quests section automatically
+      // (kept simple: user can open it)
+    }
+  }
+
+  function renderAll(){
+    renderWeekSelector();
+    renderHeader();
+    renderGoals();
+    renderScorecard();
+    renderPriorities();
+    renderKeyDates();
+    renderClasses();
+    renderAssignments();
+    renderQuests();
+    renderRewards();
+    renderModeVisibility();
+  }
+
+  // ---------- Modal ----------
+  function openModal(){
+    const modal = document.getElementById("modal");
+    const editor = document.getElementById("dataEditor");
+    editor.value = JSON.stringify(data, null, 2);
+    modal.style.display = "block";
+  }
+  function closeModal(){ document.getElementById("modal").style.display = "none"; }
+
+  // ---------- Pomodoro ----------
+  let pomodoroOn = false, pomodoroTimer = null, secondsLeft = 25*60;
+  function startPomodoro(){
+    pomodoroOn = true;
+    secondsLeft = 25*60;
+    tickPomodoro();
+  }
+  function tickPomodoro(){
+    clearInterval(pomodoroTimer);
+    pomodoroTimer = setInterval(()=>{
+      secondsLeft--;
+      if(secondsLeft <= 0){
+        clearInterval(pomodoroTimer);
+        pomodoroOn = false;
+        toast("Pomodoro done! Claim a tiny reward.");
+        document.title = "Pomodoro done!";
+      }else{
+        const m = Math.floor(secondsLeft/60);
+        const s = secondsLeft%60;
+        document.title = `🍅 ${m}:${String(s).padStart(2,"0")}`;
+      }
+    }, 1000);
+  }
+  function stopPomodoro(){
+    pomodoroOn = false;
+    clearInterval(pomodoroTimer);
+    document.title = "Whimsical 12‑Week + College Planner Dashboard";
+  }
+
+  // ---------- Events ----------
+  document.getElementById("mode").addEventListener("change",(e)=>{
+    mode = e.target.value;
+    renderAll();
+  });
+  document.getElementById("weekNumber").addEventListener("change",(e)=>{
+    data.weekly.weekNumber = Number(e.target.value);
+    document.getElementById("termTag").textContent = `Week ${data.weekly.weekNumber}`;
+    saveData();
+  });
+  document.getElementById("search").addEventListener("input", ()=>{
+    renderGoals(); renderScorecard(); renderPriorities(); renderKeyDates(); renderClasses(); renderAssignments(); renderQuests();
+  });
+
+  document.getElementById("quickAddBtn").addEventListener("click", openModal);
+  document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+  document.getElementById("saveModalBtn").addEventListener("click", ()=>{
+    const editor = document.getElementById("dataEditor");
+    try{
+      const parsed = JSON.parse(editor.value);
+      data = parsed;
+      saveData();
+      closeModal();
+      renderAll();
+    }catch(err){
+      toast("JSON error — not saved.");
+    }
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    if(!confirm("Reset everything to defaults?")) return;
+    data = structuredClone(DEFAULT_DATA);
+    saveData();
+    renderAll();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "whimsical-planner-dashboard-data.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById("markWeekDoneBtn").addEventListener("click", ()=>{
+    data.weekly.reflectionDone = true;
+    toast("Week reflection marked done.");
+    saveData();
+  });
+
+  document.getElementById("miniReviewBtn").addEventListener("click", ()=>{
+    const w = data.weekly.weekNumber || 1;
+    const isCheckpoint = (w === 4 || w === 8 || w === 12);
+    const msg = isCheckpoint
+      ? `Checkpoint Week ${w}:\n• What’s working?\n• What’s not?\n• One adjustment`
+      : `Mini review:\n• Wins\n• What slipped + why\n• One adjustment`;
+    document.getElementById("reflection").value =
+      (document.getElementById("reflection").value || "").trim() + (document.getElementById("reflection").value ? "\n\n" : "") + msg;
+    data.weekly.reflection = document.getElementById("reflection").value;
+    saveData();
+    toast(isCheckpoint ? "Checkpoint prompt added." : "Mini review prompt added.");
+  });
+
+  document.getElementById("pomodoroBtn").addEventListener("click", ()=>{
+    if(!pomodoroOn){
+      startPomodoro();
+      toast("Pomodoro started (25:00).");
+    }else{
+      stopPomodoro();
+      toast("Pomodoro stopped.");
+    }
+  });
+
+  document.getElementById("addClassBtn").addEventListener("click", ()=>{
+    data.school.classes.push({ name:"New class", professor:"", email:"", officeHours:"", meeting:"" });
+    saveData(); renderClasses();
+    openModal();
+  });
+
+  document.getElementById("addAssignmentBtn").addEventListener("click", ()=>{
+    const course = data.school.classes[0]?.name || "Course";
+    data.school.assignments.push({ title:"New assignment", course, due:"", type:"homework", weight:"low", done:false });
+    saveData(); renderAssignments();
+    openModal();
+  });
+
+  // Save from some text inputs
+  document.getElementById("braveThing").addEventListener("input",(e)=>{
+    data.weekly.braveThing = e.target.value;
+    saveData();
+  });
+  document.getElementById("timeBlocks").addEventListener("input",(e)=>{
+    data.weekly.timeBlocks = e.target.value;
+    saveData();
+  });
+  document.getElementById("reflection").addEventListener("input",(e)=>{
+    data.weekly.reflection = e.target.value;
+    saveData();
+  });
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // ---------- Boot ----------
+  renderAll();
+</script>
+</body>
+</html>
